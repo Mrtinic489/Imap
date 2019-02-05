@@ -1,21 +1,37 @@
 from Imap import Imap
+import os
 
-imap = Imap('imap.gmail.com', 993, 'mrtinic489@gmail.com', 'Fcbljhf23Akbynjdyf2323')
-print(imap._Socket.get_answer())
-imap.login()
-print(imap._Socket.get_answer())
 
-imap.select_folder('INBOX')
-print(imap._Socket.get_answer())
+class Console:
 
-print(imap.check_folder())
+    def __init__(self):
+        self.Host = None
+        self.Port = None
+        self.Login = None
+        self.Password = None
+        self.Imap = None
+        self.get_input()
 
-print(imap.search_msg('ALL'))
+    def get_input(self):
+        print('Input host and port')
+        self.Host = input()
+        self.Port = input()
+        os.system('cls')
+        print('Input login and password')
+        self.Login = input()
+        self.Password = input()
+        self.login()
 
-print(imap.choose_msg(1, 'body'))
+    def login(self):
+        os.system('cls')
+        print('Wait...')
+        self.Imap = Imap(self.Host, self.Port, self.Login, self.Password)
+        answer = self.Imap.login().decode()
+        if 'NO' in answer.split(' '):
+            print('Incorrect data, try again')
+            self.get_input()
+        else:
+            print('OK')
 
-imap.close_folder()
-print(imap._Socket.get_answer())
 
-imap.logout()
-print(imap._Socket.get_answer())
+console = Console()

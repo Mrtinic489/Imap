@@ -16,9 +16,19 @@ class Socket:
         self.generate_new_tag()
 
     def get_answer(self):
-        return self.Sock.recv(1024)
+        answers = []
+        try:
+            self.Sock.settimeout(1)
+            while True:
+                answers.append(self.Sock.recv(1024))
+        except Exception:
+            result = b''
+            for item in answers:
+                result += item
+            return result
 
     def generate_new_tag(self):
         decoded_str = self.Tag.decode()
         number_of_request = int(decoded_str[-1])
         self.Tag = ('A' + str(number_of_request + 1)).encode()
+
