@@ -18,7 +18,7 @@ class Socket:
     def get_answer(self):
         answers = []
         try:
-            self.Sock.settimeout(1)
+            self.Sock.settimeout(0.5)
             while True:
                 answers.append(self.Sock.recv(1024))
         except Exception:
@@ -31,4 +31,3 @@ class Socket:
         decoded_str = self.Tag.decode()
         number_of_request = int(decoded_str[-1])
         self.Tag = ('A' + str(number_of_request + 1)).encode()
-

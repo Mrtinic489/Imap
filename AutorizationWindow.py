@@ -22,28 +22,28 @@ class AutorizationWindow(QtWidgets.QWidget):
         host_label = QtWidgets.QLabel('Host')
         self.Grid.addWidget(host_label, 0, 0)
 
-        host_line = QtWidgets.QLineEdit()
+        host_line = QtWidgets.QLineEdit('imap.gmail.com')
         self.Host_line = host_line
         self.Grid.addWidget(host_line, 0, 1)
 
         port_label = QtWidgets.QLabel('Port')
         self.Grid.addWidget(port_label, 1, 0)
 
-        port_line = QtWidgets.QLineEdit()
+        port_line = QtWidgets.QLineEdit('993')
         self.Port_line = port_line
         self.Grid.addWidget(port_line, 1, 1)
 
         login_label = QtWidgets.QLabel('Login')
         self.Grid.addWidget(login_label, 2, 0)
 
-        login_line = QtWidgets.QLineEdit()
+        login_line = QtWidgets.QLineEdit('')
         self.Login_line = login_line
         self.Grid.addWidget(login_line, 2, 1)
 
         password_label = QtWidgets.QLabel('Password')
         self.Grid.addWidget(password_label, 3, 0)
 
-        password_line = QtWidgets.QLineEdit()
+        password_line = QtWidgets.QLineEdit('')
         self.Password_line = password_line
         self.Grid.addWidget(password_line, 3, 1)
         password_line.setEchoMode(2)

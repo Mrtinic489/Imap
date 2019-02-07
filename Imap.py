@@ -26,16 +26,22 @@ class Imap:
     def rename_folder(self, old_name, new_name):
         self._Socket.send_msg('RENAME {0} {1}'.format(old_name, new_name))
 
-    def show_list(self):
+    def show_list_of_folders(self):
         self._Socket.send_msg('LIST "" *')
         return self.get_answer()
 
+    def get_count_of_letters(self):
+        raw_result = self.search_msg('all').decode().split(' ')[-5]
+        result = raw_result[:raw_result.find('\r')]
+        if result == 'SEARCH':
+            return 0
+        return result
+
     def parse_list_of_folders(self):
         result = []
-        bytestr = self.show_list().decode()
+        bytestr = self.show_list_of_folders().decode()
         splitted_str = bytestr.split('*')
         splitted_str.remove(splitted_str[0])
-        print(splitted_str)
         for item in splitted_str:
             if item.__contains__('INBOX'):
                 result.append(tuple(['Inbox', 'INBOX']))
@@ -44,14 +50,13 @@ class Imap:
             raw_name_of_folder = raw_name_of_folder.replace('\\HasNoChildren', '')
             raw_name_of_folder = raw_name_of_folder.replace('\\HasChildren', '')
             raw_name_of_folder = raw_name_of_folder.replace('\\Noselect', '')
+            raw_name_of_folder = raw_name_of_folder.replace('\\NoInferiors', '')
             name_of_folder = raw_name_of_folder[raw_name_of_folder.find('\\') + 1:]
             if name_of_folder == '' or name_of_folder == ' ':
                 continue
-            print(name_of_folder)
-            id_of_folder = item[item.rfind('/') + 1:item.rfind('"')]
+            id_of_folder = item[item.rfind('"', 0, item.rfind('"')) + 1:item.rfind('"')]
             result.append(tuple([name_of_folder, id_of_folder]))
         return result
-
 
     def set_active(self, folder_name):
         self._Socket.send_msg('SUBCRIBE {}'.format(folder_name))
