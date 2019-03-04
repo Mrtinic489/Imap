@@ -20,10 +20,10 @@ class LetterWidget(QtWidgets.QWidget):
         check_box.stateChanged.connect(self.add_to_marked_list)
         grid.addWidget(check_box, 0, 0)
 
-        date_label = QtWidgets.QLabel(self.Letter.Date)
+        date_label = QtWidgets.QLabel(self.Letter.date)
         grid.addWidget(date_label, 0, 1)
 
-        letter_button = QtWidgets.QPushButton(self.Letter.Header)
+        letter_button = QtWidgets.QPushButton(self.Letter.subject)
         letter_button.clicked.connect(self.letter_button_clicked)
         grid.addWidget(letter_button, 0, 2, 1, 2)
 

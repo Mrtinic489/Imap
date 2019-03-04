@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from MainWindow import MainWindow
 from Imap import Imap
@@ -36,14 +37,14 @@ class AutorizationWindow(QtWidgets.QWidget):
         login_label = QtWidgets.QLabel('Login')
         self.Grid.addWidget(login_label, 2, 0)
 
-        login_line = QtWidgets.QLineEdit('')
+        login_line = QtWidgets.QLineEdit()
         self.Login_line = login_line
         self.Grid.addWidget(login_line, 2, 1)
 
         password_label = QtWidgets.QLabel('Password')
         self.Grid.addWidget(password_label, 3, 0)
 
-        password_line = QtWidgets.QLineEdit('')
+        password_line = QtWidgets.QLineEdit()
         self.Password_line = password_line
         self.Grid.addWidget(password_line, 3, 1)
         password_line.setEchoMode(2)
@@ -65,5 +66,14 @@ class AutorizationWindow(QtWidgets.QWidget):
             main_window = MainWindow(imap, self)
             self.Main_window = main_window
             self.hide()
-        except Exception:
-            print('Smth go wrong')
+        except Exception as e:
+            self.message_box = QtWidgets.QMessageBox()
+            if str(e) == 'Incorrect data':
+                self.message_box.setText(str(e))
+            else:
+                self.message_box.setText('Problems with decode')
+            self.message_box.show()
+
+    def keyPressEvent(self, e):
+        if e.key() in [Qt.Key_Enter, Qt.Key_Return]:
+            self.login_button_clicked()

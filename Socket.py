@@ -20,11 +20,10 @@ class Socket:
         try:
             self.Sock.settimeout(0.5)
             while True:
+                # вечного цикла не будет, ведь сработает таймаут
                 answers.append(self.Sock.recv(1024))
         except Exception:
-            result = b''
-            for item in answers:
-                result += item
+            result = b''.join(item for item in answers)
             return result
 
     def generate_new_tag(self):

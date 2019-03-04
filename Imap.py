@@ -13,9 +13,12 @@ class Imap:
     def login(self):
         result_str = 'LOGIN {0} {1}'.format(self.Login, self.Password)
         self._Socket.send_msg(result_str)
-        answer = self.get_answer().decode()
-        if answer.__contains__('AUTHENTICATIONFAILED'):
-            raise Exception
+        try:
+            answer = self.get_answer().decode()
+        except Exception:
+            raise Exception('Problems with decode')
+        if 'AUTHENTICATIONFAILED' in answer:
+            raise Exception('Incorrect data')
 
     def select_folder(self, folder_name):
         self._Socket.send_msg('SELECT {}'.format(folder_name))
@@ -47,14 +50,20 @@ class Imap:
                 result.append(tuple(['Inbox', 'INBOX']))
                 continue
             raw_name_of_folder = item[item.find('(') + 1:item.find(')')]
-            raw_name_of_folder = raw_name_of_folder.replace('\\HasNoChildren', '')
-            raw_name_of_folder = raw_name_of_folder.replace('\\HasChildren', '')
-            raw_name_of_folder = raw_name_of_folder.replace('\\Noselect', '')
-            raw_name_of_folder = raw_name_of_folder.replace('\\NoInferiors', '')
-            name_of_folder = raw_name_of_folder[raw_name_of_folder.find('\\') + 1:]
+            raw_name_of_folder = raw_name_of_folder.replace(
+                '\\HasNoChildren', '')
+            raw_name_of_folder = raw_name_of_folder.replace(
+                '\\HasChildren', '')
+            raw_name_of_folder = raw_name_of_folder.replace(
+                '\\Noselect', '')
+            raw_name_of_folder = raw_name_of_folder.replace(
+                '\\NoInferiors', '')
+            name_of_folder =\
+                raw_name_of_folder[raw_name_of_folder.find('\\') + 1:]
             if name_of_folder == '' or name_of_folder == ' ':
                 continue
-            id_of_folder = item[item.rfind('"', 0, item.rfind('"')) + 1:item.rfind('"')]
+            id_of_folder = item[item.rfind(
+                '"', 0, item.rfind('"')) + 1:item.rfind('"')]
             result.append(tuple([name_of_folder, id_of_folder]))
         return result
 

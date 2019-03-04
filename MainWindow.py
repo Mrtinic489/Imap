@@ -22,7 +22,8 @@ class MainWindow(QtWidgets.QWidget):
 
         folders_box = QtWidgets.QComboBox()
         self.Folders_box = folders_box
-        folders_box.addItems([item[0] for item in self.Imap.parse_list_of_folders()])
+        folders_box.addItems(
+            [item[0] for item in self.Imap.parse_list_of_folders()])
         folders_box.activated[str].connect(self.folder_changed)
         grid.addWidget(folders_box, 0, 0)
 
@@ -35,6 +36,10 @@ class MainWindow(QtWidgets.QWidget):
 
         remove_button = QtWidgets.QPushButton('Remove')
         grid.addWidget(remove_button, 2, 0)
+
+        show_more_button = QtWidgets.QPushButton('Show more')
+        self.show_more_button = show_more_button
+        grid.addWidget(show_more_button, 5, 1, 1, 5)
 
         list_of_letters_widget = ListOfLettersWidget(self.Imap, self)
 
@@ -54,4 +59,3 @@ class MainWindow(QtWidgets.QWidget):
     def folder_changed(self, text):
         self.Scroll_area.setWidget(ListOfLettersWidget(self.Imap, self))
         self.update()
-
