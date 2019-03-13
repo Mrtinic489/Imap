@@ -17,14 +17,29 @@ class Socket:
 
     def get_answer(self):
         answers = []
-        try:
-            self.Sock.settimeout(0.5)
-            while True:
-                # вечного цикла не будет, ведь сработает таймаут
+        is_break = False
+        while True:
+            if is_break:
+                break
+            if len(answers) > 0:
+                try:
+                    temp = answers[-1].decode()
+                except UnicodeDecodeError:
+                    pass
+                if temp[-11:] == '(Success)\r\n' or temp[-9:] == 'Success\r\n' or 'ready' in temp:
+                    is_break = True
+                    break
+                else:
+                    answers.append(self.Sock.recv(1024))
+            else:
                 answers.append(self.Sock.recv(1024))
-        except Exception:
-            result = b''.join(item for item in answers)
-            return result
+        # try:
+        #     self.Sock.settimeout(1)
+        #     while True:
+        #         answers.append(self.Sock.recv(1024))
+        # except Exception:
+        result = b''.join(answers)
+        return result
 
     def generate_new_tag(self):
         decoded_str = self.Tag.decode()

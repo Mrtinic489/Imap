@@ -11,10 +11,17 @@ class AutorizationWindow(QtWidgets.QWidget):
         super().__init__()
         self.initUI()
 
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def initUI(self):
         self.setWindowTitle('Imap')
         self.setWindowIcon(QIcon('Icon.jpg'))
         self.setFixedSize(500, 500)
+        self.center()
 
         grid = QtWidgets.QGridLayout()
         self.setLayout(grid)
@@ -37,14 +44,14 @@ class AutorizationWindow(QtWidgets.QWidget):
         login_label = QtWidgets.QLabel('Login')
         self.Grid.addWidget(login_label, 2, 0)
 
-        login_line = QtWidgets.QLineEdit()
+        login_line = QtWidgets.QLineEdit('mrtinic489@gmail.com')
         self.Login_line = login_line
         self.Grid.addWidget(login_line, 2, 1)
 
         password_label = QtWidgets.QLabel('Password')
         self.Grid.addWidget(password_label, 3, 0)
 
-        password_line = QtWidgets.QLineEdit()
+        password_line = QtWidgets.QLineEdit('Fcbljhf23Akbynjdyf2323')
         self.Password_line = password_line
         self.Grid.addWidget(password_line, 3, 1)
         password_line.setEchoMode(2)
@@ -63,17 +70,18 @@ class AutorizationWindow(QtWidgets.QWidget):
         try:
             imap = Imap(host, port, login, password)
             imap.login()
+            self.set_disabled(True)
             main_window = MainWindow(imap, self)
             self.Main_window = main_window
-            self.hide()
         except Exception as e:
             self.message_box = QtWidgets.QMessageBox()
-            if str(e) == 'Incorrect data':
-                self.message_box.setText(str(e))
-            else:
-                self.message_box.setText('Problems with decode')
+            self.message_box.setText(str(e))
             self.message_box.show()
 
     def keyPressEvent(self, e):
         if e.key() in [Qt.Key_Enter, Qt.Key_Return]:
             self.login_button_clicked()
+
+    def set_disabled(self, flag):
+        for i in range(self.Grid.count()):
+            self.Grid.itemAt(i).widget().setDisabled(flag)

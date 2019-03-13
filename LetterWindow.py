@@ -10,10 +10,17 @@ class LetterWindow(QtWidgets.QWidget):
         self.Letter_widget = letter_widget
         self.initUI()
 
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def initUI(self):
         self.setWindowTitle('Imap')
         self.setFixedSize(700, 500)
         self.setWindowIcon(QIcon('Icon.jpg'))
+        self.center()
         grid = QtWidgets.QGridLayout()
         self.setLayout(grid)
         self.Grid = grid

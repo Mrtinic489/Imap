@@ -13,15 +13,14 @@ class Imap:
     def login(self):
         result_str = 'LOGIN {0} {1}'.format(self.Login, self.Password)
         self._Socket.send_msg(result_str)
-        try:
-            answer = self.get_answer().decode()
-        except Exception:
-            raise Exception('Problems with decode')
+        answer = self.get_answer().decode()
         if 'AUTHENTICATIONFAILED' in answer:
-            raise Exception('Incorrect data')
+            raise Exception('Authentication failed')
+        return self.get_answer()
 
     def select_folder(self, folder_name):
         self._Socket.send_msg('SELECT {}'.format(folder_name))
+        return self.get_answer()
 
     def delete_folder(self, folder_name):
         self._Socket.send_msg('DELETE {}'.format(folder_name))
@@ -34,8 +33,12 @@ class Imap:
         return self.get_answer()
 
     def get_count_of_letters(self):
-        raw_result = self.search_msg('all').decode().split(' ')[-5]
-        result = raw_result[:raw_result.find('\r')]
+        raw_result = self.search_msg('all').decode().split('\n')
+        result = []
+        for item in raw_result:
+            if '* SEARCH' in item:
+                result = item.split(' ')
+        result = result[-1].replace('\r', '')
         if result == 'SEARCH':
             return 0
         return result
@@ -44,10 +47,11 @@ class Imap:
         result = []
         bytestr = self.show_list_of_folders().decode()
         splitted_str = bytestr.split('*')
-        splitted_str.remove(splitted_str[0])
         for item in splitted_str:
-            if item.__contains__('INBOX'):
-                result.append(tuple(['Inbox', 'INBOX']))
+            if 'INBOX' in item:
+                result.append(('Inbox', 'INBOX'))
+                continue
+            if 'All' in item:
                 continue
             raw_name_of_folder = item[item.find('(') + 1:item.find(')')]
             raw_name_of_folder = raw_name_of_folder.replace(

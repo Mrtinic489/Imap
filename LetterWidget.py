@@ -9,6 +9,7 @@ class LetterWidget(QtWidgets.QWidget):
         super().__init__()
         self.Letter = letter
         self.List_of_letters_widget = list_of_letters_widget
+        self.Letter_window = None
         self.initUI()
 
     def initUI(self):
@@ -26,8 +27,6 @@ class LetterWidget(QtWidgets.QWidget):
         letter_button = QtWidgets.QPushButton(self.Letter.subject)
         letter_button.clicked.connect(self.letter_button_clicked)
         grid.addWidget(letter_button, 0, 2, 1, 2)
-
-        self.show()
 
     def add_to_marked_list(self, state):
         if state == Qt.Checked:

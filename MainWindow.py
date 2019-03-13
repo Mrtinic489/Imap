@@ -8,13 +8,20 @@ class MainWindow(QtWidgets.QWidget):
     def __init__(self, imap, autorization_window):
         super().__init__()
         self.Imap = imap
-        self.Autoriztion_window = autorization_window
+        self.autorization_window = autorization_window
         self.initUI()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def initUI(self):
         self.setWindowTitle('Imap')
         self.setWindowIcon(QIcon('Icon.jpg'))
         self.setFixedSize(700, 500)
+        self.center()
 
         grid = QtWidgets.QGridLayout()
         self.setLayout(grid)
@@ -22,14 +29,11 @@ class MainWindow(QtWidgets.QWidget):
 
         folders_box = QtWidgets.QComboBox()
         self.Folders_box = folders_box
-        folders_box.addItems(
-            [item[0] for item in self.Imap.parse_list_of_folders()])
+        if len(self.Imap.parse_list_of_folders()) != 0:
+            folders_box.addItems(
+                [item[0] for item in self.Imap.parse_list_of_folders()])
         folders_box.activated[str].connect(self.folder_changed)
         grid.addWidget(folders_box, 0, 0)
-
-        logout_button = QtWidgets.QPushButton('Logout')
-        grid.addWidget(logout_button, 4, 0)
-        logout_button.clicked.connect(self.logout_button_clicked)
 
         move_button = QtWidgets.QPushButton('Move')
         grid.addWidget(move_button, 1, 0)
@@ -42,6 +46,7 @@ class MainWindow(QtWidgets.QWidget):
         grid.addWidget(show_more_button, 5, 1, 1, 5)
 
         list_of_letters_widget = ListOfLettersWidget(self.Imap, self)
+        self.list_of_letters = list_of_letters_widget
 
         scroll_area = QtWidgets.QScrollArea()
         self.Scroll_area = scroll_area
@@ -49,12 +54,7 @@ class MainWindow(QtWidgets.QWidget):
         scroll_area.setWidget(list_of_letters_widget)
         grid.addWidget(scroll_area, 0, 1, 5, 5)
 
-        self.show()
-
-    def logout_button_clicked(self):
-        self.Imap.logout()
-        self.Autoriztion_window.show()
-        self.hide()
+        # self.show()
 
     def folder_changed(self, text):
         self.Scroll_area.setWidget(ListOfLettersWidget(self.Imap, self))
